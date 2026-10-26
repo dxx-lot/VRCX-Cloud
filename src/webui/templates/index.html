@@ -1,0 +1,1045 @@
+<!doctype html>
+
+<html lang="zh">
+
+<head>
+<meta name="app-build" content="__UI_VER__">
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#6d5ef0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VRCX Cloud">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+
+<title>VRCX Cloud</title>
+
+<link rel="stylesheet" href="/static/style.css?v=__UI_VER__">
+<link rel="stylesheet" href="/static/mobile.css?v=__UI_VER__">
+
+</head>
+
+<body>
+
+<header class="mobile-header">
+  <div class="mobile-heading"><h1 id="mobileTitle">好友动态</h1><div class="mobile-header-actions"><button class="icon-button" data-hide-in-merge onclick="openQS()" aria-label="搜索"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg></button><button class="icon-button" onclick="mobileGo('notifs')" aria-label="通知"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3zm4 11h4"/></svg></button></div></div>
+  <button class="mobile-account" onclick="mobileAccounts()" aria-label="选择账号"><span class="account-status"></span><span id="mobileAccountName">账号A</span><span>⌄</span></button>
+</header>
+<div class="topbar">
+
+  <div class="tb-logo">VRCX<small>Cloud</small></div>
+
+  <div class="gswitch" id="gswitch">
+
+    <div class="gslide" id="gslide"></div>
+
+    <button data-g="m" onclick="switchGA('m')">合并</button>
+
+    <button data-g="a" class="on" onclick="switchGA('a')">账号A</button>
+
+    <button data-g="b" onclick="switchGA('b')">账号B</button>
+
+  </div>
+
+  <div class="tb-right"><span id="gaView">视角：账号A</span></div>
+
+</div>
+
+<div class="bodyrow">
+
+<nav class="side">
+
+  <div class="logo">VRCX <small>Cloud</small></div>
+
+  <div class="selfcard" id="selfCard" style="display:none" onclick="goDashSelf()">
+
+    <div id="scSingle" style="display:flex;gap:8px;align-items:center;min-width:0;flex:1">
+
+      <img id="selfThumb" alt=""><div><div class="n" id="selfName"></div><div class="l" id="selfLoc"></div></div>
+
+    </div>
+
+    <div id="scMerge" class="hidden" style="min-width:0;flex:1"></div>
+
+  </div>
+
+  <div class="nav" id="nav"></div>
+
+  <div class="sidefoot">
+
+    <div><span class="dot" id="sideDot"></span><span id="sideState">检测中…</span></div>
+    <div id="esState" class="dim" role="status" style="font-size:11px;margin-top:2px">页面更新：初始化中…</div>
+
+    <div class="piStatsLine dim" style="font-size:11px;margin-top:10px;line-height:1.5"></div>
+
+    <button id="sideSettings" class="ghost" data-hide-in-merge style="width:100%;padding:6px;margin-top:6px" onclick="switchPage('settings')">设置</button>
+
+    <button class="ghost" style="width:100%;padding:6px;margin-top:4px" onclick="window.open('https://github.com/vrcx-team/VRCX/wiki','_blank')">VRCX 参考文档</button>
+
+  </div>
+
+</nav>
+
+<main class="main">
+<div id="pageToolbar" class="page-toolbar"><button id="pageBack" class="ghost hidden" onclick="pageBack()"></button></div>
+<div id="appError" class="msg hidden" role="alert"></div>
+<div id="appPartial" class="msg hidden" role="status"></div>
+
+  <section id="page-dash" class="hidden">
+    <div class="page-heading"><h2>仪表板</h2></div>
+    <div class="dash-toolbar">
+      <select id="dashSel" onchange="DASH_IDX=+this.value;renderDashWidgets()"></select>
+      <button class="ghost" onclick="createDash()">＋ 新建仪表板</button>
+      <button class="ghost" onclick="deleteDash()">删除当前</button>
+      <button class="ghost" onclick="renameDash()">重命名</button>
+      <span class="row" style="margin-left:auto">
+        <select id="addWidgetSel">
+          <option value="feed">＋动态流</option><option value="online">＋游戏内好友</option>
+          <option value="web">＋网页在线好友</option><option value="vrcsvc">＋VRChat服务状态</option>
+        </select>
+        <button class="ghost" onclick="addWidget()">添加面板</button>
+      </span>
+    </div>
+    <div class="card" id="selfPanel" style="display:none">
+      <div class="head"><div style="font-weight:600">我的状态</div></div>
+      <div class="row">
+        <select id="myStatus">
+          <option value="active">在线</option><option value="join me">Join Me·欢迎加入</option>
+          <option value="ask me">Ask Me·先询问</option><option value="busy">勿扰</option>
+        </select>
+        <input id="myDesc" placeholder="状态签名（最长32字）" style="flex:1;min-width:160px">
+        <button onclick="saveMyStatus()">应用</button>
+        <span class="msg" id="myStatusMsg" style="margin:0"></span>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <span class="dim" style="font-size:13px">状态预设：</span>
+        <select id="presetSel" style="max-width:260px"><option value="">— 加载中 —</option></select>
+        <button class="ghost" onclick="applyPreset()">应用预设</button>
+        <button class="ghost" onclick="savePreset()">存为预设</button>
+        <button class="ghost" onclick="removePreset()">删除所选</button>
+      </div>
+    </div>
+    <div class="wgrid" id="widgetsGrid"></div>
+  </section>
+
+  <section id="page-home" class="hidden">
+    <div id="mobileProfile" class="mobile-profile"></div>
+    <div class="home-actions"><button onclick="mobileGo('login')"><strong>账号</strong><span>›</span></button><button data-hide-in-merge onclick="mobileGo('push')"><strong>推送</strong><span>›</span></button><button data-hide-in-merge onclick="mobileGo('settings')"><strong>设置</strong><span>›</span></button><button onclick="mobileMenu()"><strong>全部功能</strong><span>›</span></button></div>
+  </section>
+  <section id="page-feed" class="hidden"><div class="page-heading"><h2>好友动态</h2></div>
+    <div id="feedFreshness" class="feed-freshness dim" role="status" aria-live="off">正在读取采集状态…</div>
+    <div class="mobile-feed-controls"><div id="mobileFeedSelection" class="mobile-feed-selection hidden"></div><label class="mobile-search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="mobileFeedSearch" placeholder="搜索好友" aria-label="搜索动态" oninput="mobileFeedSearch(this.value)"></label><div class="mobile-filter" id="mobileFeedFilter">
+      <button class="active" data-f="" onclick="setFeedFilter(this)">所有</button><button data-f="online" onclick="setFeedFilter(this)">上线</button><button data-f="offline" onclick="setFeedFilter(this)">下线</button><button data-f="location" onclick="setFeedFilter(this)">位置变动</button><button data-f="active" onclick="setFeedFilter(this)">网页在线</button><button data-f="web_offline" onclick="setFeedFilter(this)">网页下线</button><button data-f="status" onclick="setFeedFilter(this)">状态变动</button><button data-f="avatar" onclick="setFeedFilter(this)">模型变动</button>
+    </div></div>
+    <div id="mobileFeed" aria-live="polite"></div>
+
+    <div class="card">
+
+      <div class="feed-toolbar">
+        <div class="feed-controls"><button class="tabbtn" id="starBtn" onclick="toggleStar()" title="只显示收藏夹好友">收藏</button><select id="feedFriendSel" onchange="setFeedFriend(this.value)"><option value="">全部好友</option></select></div>
+        <input id="feedSearch" type="search" aria-label="搜索动态" placeholder="搜索" oninput="setFeedSearch(this.value)">
+        <div class="tabs" id="feedFilter"><button class="tabbtn active" data-f="" onclick="setFeedFilter(this)">所有</button>
+
+          <button class="tabbtn" data-f="location" onclick="setFeedFilter(this)">位置变动</button>
+
+          <button class="tabbtn" data-f="online" onclick="setFeedFilter(this)">上线</button>
+
+          <button class="tabbtn" data-f="offline" onclick="setFeedFilter(this)">下线</button>
+
+          <button class="tabbtn" data-f="web_offline" onclick="setFeedFilter(this)">网页下线</button>
+
+          <button class="tabbtn" data-f="active" onclick="setFeedFilter(this)">网页在线</button>
+
+          <button class="tabbtn" data-f="status" onclick="setFeedFilter(this)">状态变动</button>
+
+          <button class="tabbtn" data-f="desc" onclick="setFeedFilter(this)">简介变更</button>
+
+          <button class="tabbtn" data-f="avatar" onclick="setFeedFilter(this)">模型变动</button>
+
+        </div>
+
+      </div>
+
+      <table class="feed-table">
+
+        <thead><tr>
+
+          <th style="width:26px"></th>
+
+          <th style="width:128px;cursor:pointer;user-select:none" onclick="toggleFeedSort()">时间 <span id="feedSortIcon">▼</span></th>
+
+          <th style="width:92px">类型</th>
+
+          <th style="width:150px">玩家</th>
+
+          <th>详细信息</th>
+
+        </tr></thead>
+
+        <tbody id="feedTable"><tr><td colspan="5" class="dim">加载中…</td></tr></tbody>
+
+      </table>
+
+      <div class="row" style="margin-top:10px;justify-content:space-between">
+
+        <div class="row dim" style="font-size:13px">每页显示行数
+
+          <select id="feedPageSize" onchange="FEED_PAGE=0;renderFeed()">
+
+            <option value="20" selected>20</option><option value="50">50</option>
+
+            <option value="100">100</option><option value="200">200</option>
+
+          </select></div>
+
+        <div class="row" id="feedPager"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="page-locations" class="hidden"><label class="mobile-search friend-search"><svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input placeholder="搜索好友" aria-label="搜索好友" oninput="mobileFriendSearch(this.value)"></label><div class="page-heading"><h2>好友位置</h2><span class="dim" id="locCount" style="font-size:13px;font-weight:400"></span></div>
+
+    <div class="tabs" id="locTabs">
+
+      <button class="tabbtn active" data-t="online" onclick="setLocTab(this)">在线</button>
+
+      <button class="tabbtn" data-t="rooms" onclick="setLocTab(this)">同一房间</button>
+
+      <button class="tabbtn" data-t="web" onclick="setLocTab(this)">活跃中（仅登录网页端）</button>
+
+      <button class="tabbtn" data-t="offline" onclick="setLocTab(this)">离线</button>
+
+    </div>
+
+    <div id="locations"><div class="dim">加载中…</div></div>
+
+  </section>
+
+  <section id="page-friends" class="hidden"><div class="page-heading"><h2>好友列表</h2></div>
+
+    <div style="display:grid;grid-template-columns:1fr 235px;gap:14px;align-items:start">
+
+      <div class="card" style="margin-bottom:0">
+
+        <div class="row" style="margin-bottom:8px">
+
+          <input id="fq" placeholder="搜索好友" style="width:170px" oninput="loadFriends()">
+
+          <span class="dim" style="font-size:13px" id="friendCount"></span>
+
+        </div>
+
+        <div id="friends"><div class="dim">加载中…</div></div>
+
+      </div>
+
+      <div class="card" style="margin-bottom:0">
+
+        <div style="font-weight:600;margin-bottom:6px">在线概况</div>
+
+        <table><tbody id="friendSummary"></tbody></table>
+
+        <div class="dim" style="font-size:11px;margin-top:6px">点击行筛选左侧列表</div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="page-favorites" class="hidden"><div class="page-heading"><h2>收藏&分组</h2></div>
+
+    <div class="tabs" id="favTabs">
+
+      <button class="tabbtn active" data-t="friend" onclick="setFavType(this)">好友分组</button>
+
+      <button class="tabbtn" data-t="world" onclick="setFavType(this)">世界收藏</button>
+
+      <button class="tabbtn" data-t="avatar" onclick="setFavType(this)">模型收藏</button>
+
+    </div>
+
+    <div style="display:grid;grid-template-columns:250px 1fr;gap:14px;align-items:start">
+
+      <div class="card" style="margin:0">
+
+        <div class="head"><div style="font-weight:600" id="favGTitle">在线收藏夹</div>
+
+          <button class="ghost mini" onclick="loadFavorites()">刷新</button></div>
+
+        <div id="favGroups"><div class="dim">加载中…</div></div>
+
+        <button class="ghost" style="width:100%;margin-top:8px" onclick="createFavGroup()">重命名收藏夹</button>
+        <button class="ghost" style="width:100%;margin-top:4px" onclick="importFavGroups()">导入收藏夹（粘贴 JSON）</button>
+
+      </div>
+
+      <div class="card" style="margin:0;min-height:300px">
+
+        <div class="head"><div style="font-weight:600" id="favSelName"></div>
+
+          <span class="dim" id="favSelCount" style="font-size:13px"></span></div>
+
+        <div id="favItems"><div class="dim">加载中…</div></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="page-stats" class="hidden"><div class="page-heading"><h2>统计</h2></div>
+
+    <div class="row" style="margin-bottom:14px">
+
+      <select id="statDays" onchange="loadStats()">
+
+        <option value="1">最近24小时</option><option value="7" selected>最近7天</option>
+
+        <option value="30">最近30天</option>
+
+      </select>
+
+      <span class="dim" style="font-size:13px">基于本地事件记录</span>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">每日在线总时长</div>
+
+      <div class="dim" style="font-size:12px;margin-bottom:6px">柱高=当日全部好友在线时长合计</div>
+
+      <div id="statDaily" style="display:flex;gap:4px;align-items:flex-end;height:110px"></div></div>
+
+    <div class="grid2">
+
+      <div class="card"><div style="font-weight:600;margin-bottom:8px">好友在线时长排行</div>
+
+        <div id="statFriends"><div class="dim">加载中…</div></div></div>
+
+      <div class="card"><div style="font-weight:600;margin-bottom:8px">常去世界 Top 10</div>
+
+        <div id="statWorlds"><div class="dim">加载中…</div></div></div>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">上线时段热力图</div>
+
+      <div class="dim" style="font-size:12px">一行一天（一~日），一列一小时（0-23点）</div>
+
+      <div class="heat" id="statHeat"></div></div>
+
+  </section>
+
+  <section id="page-search" class="hidden"><div class="page-heading"><h2>搜索</h2></div>
+
+    <div class="card">
+
+      <div class="row">
+
+        <input id="sq" placeholder="用户名 / 世界名 / usr_ / wrld_ id" style="flex:1;min-width:220px"
+
+               onkeydown="if(event.key==='Enter')doSearch()">
+
+        <button onclick="doSearch()">搜索</button>
+
+      </div>
+
+    </div>
+
+    <div class="card"><h3 style="margin-top:0">用户</h3><div id="searchUsers"><div class="dim">输入关键词开始搜索</div></div></div>
+
+    <div class="card"><h3 style="margin-top:0">世界</h3><div id="searchWorlds"><div class="dim">—</div></div></div>
+
+  </section>
+
+  <section id="page-history" class="hidden"><div class="page-heading"><h2>记录</h2></div>
+
+    <div class="card">
+
+      <div class="row" style="margin-bottom:8px">
+
+        <input id="qname" placeholder="按名字筛选" style="width:140px">
+
+        <select id="qtype"><option value="">全部事件</option><option value="online">上线</option>
+
+          <option value="offline">下线</option><option value="location">位置变动</option>
+
+          <option value="active">网页在线</option><option value="status">状态变动</option>
+
+          <option value="desc">简介变更</option></select>
+
+        <select id="qdays" onchange="loadHistory()">
+
+          <option value="1">最近1天</option><option value="3" selected>最近3天</option>
+
+          <option value="7">最近7天</option><option value="30">最近30天</option>
+
+        </select>
+
+        <button class="ghost" onclick="loadHistory()">查询</button>
+
+      </div>
+
+      <table>
+
+        <thead><tr><th style="width:120px">时间</th><th style="width:160px">好友</th><th>详情</th></tr></thead>
+
+        <tbody id="history"><tr><td colspan="3" class="dim">加载中…</td></tr></tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+  <section id="page-notifs" class="hidden"><div class="page-heading"><h2>通知</h2></div>
+
+    <div class="card">
+
+      <div class="row" style="margin-bottom:8px">
+
+        <select id="ntType" onchange="renderNotifs()"><option value="">全部类型</option></select>
+
+        <input id="ntSearch" placeholder="搜索通知" style="width:170px;margin-left:auto" oninput="renderNotifs()">
+
+      </div>
+
+      <table>
+
+        <thead><tr><th style="width:120px">时间</th><th style="width:120px">类型</th><th style="width:140px">玩家</th><th style="width:140px">群组</th><th>封面</th><th>消息</th><th style="width:170px">操作</th></tr></thead>
+
+        <tbody id="ntBody"><tr><td colspan="5" class="dim">加载中…</td></tr></tbody>
+
+      </table>
+      <div id="mobileNotifs"></div>
+
+      <div class="row" style="margin-top:10px;justify-content:space-between">
+
+        <div class="row dim" style="font-size:13px">每页显示行数
+
+          <select id="ntPageSize" onchange="NT_PAGE=0;renderNotifs()"><option>20</option><option>50</option><option>100</option></select></div>
+
+        <div class="row" id="ntPager"></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section id="page-avatars" class="hidden"><div class="page-heading"><h2>我的模型</h2></div>
+
+    <div class="card" id="curAvatarCard" style="display:none">
+
+      <div style="font-weight:600;margin-bottom:8px">正在穿着</div>
+
+      <div id="curAvatar"></div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="row" style="margin-bottom:8px">
+
+        <div class="tabs" style="margin:0">
+
+          <button class="tabbtn active" id="avViewGrid" onclick="setAvView('grid')">网格</button>
+
+          <button class="tabbtn" id="avViewList" onclick="setAvView('list')">列表</button>
+
+        </div>
+
+        <input id="avSearch" placeholder="搜索模型" style="width:150px;margin-left:auto" oninput="renderAvatars()">
+
+      </div>
+
+      <div class="head"><div style="font-weight:600">我上传的模型</div></div>
+
+      <div id="avatarsOwn"></div>
+
+    </div>
+
+    <div class="card">
+
+      <div class="head"><div style="font-weight:600">收藏的模型</div>
+
+        <span class="dim" style="font-size:12px">点击即切换为当前形象（API 生效，进游戏即穿）</span></div>
+
+      <div id="avatarsFav"></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-moderation" class="hidden"><div class="page-heading"><h2>社交</h2></div>
+
+    <div class="tabs" id="socTabs">
+
+      <button class="tabbtn active" data-t="log" onclick="setSocTab(this)">好友日志</button>
+
+      <button class="tabbtn" data-t="list" onclick="setSocTab(this)">好友列表</button>
+
+      <button class="tabbtn" data-t="mod" onclick="setSocTab(this)">玩家管理</button>
+
+    </div>
+
+    <div class="card" id="soc-log">
+
+      <div class="row" style="margin-bottom:8px">
+
+        <select id="flType" onchange="loadFriendLog()">
+
+          <option value="">全部类型</option><option value="friend-add">新的好友</option>
+
+          <option value="friend-delete">删除好友</option><option value="trust">等级变动</option>
+
+          <option value="name">昵称变动</option>
+
+        </select>
+
+        <input id="flSearch" placeholder="搜索好友日志" style="width:180px;margin-left:auto" oninput="loadFriendLog()">
+
+      </div>
+
+      <table>
+
+        <thead><tr><th style="width:120px">时间</th><th style="width:110px">类型</th><th>玩家</th><th style="width:60px">操作</th></tr></thead>
+
+        <tbody id="friendlog"><tr><td colspan="4" class="dim">加载中…</td></tr></tbody>
+
+      </table>
+
+    </div>
+
+    <div class="card hidden" id="soc-list">
+
+      <div class="row" style="margin-bottom:8px">
+
+        <input id="fltSearch" placeholder="搜索好友" style="width:170px" oninput="renderFriendTable()">
+
+        <span class="dim" style="font-size:12px">一起玩次数/时长/最后见面需要游戏日志数据，显示 —</span>
+
+      </div>
+
+      <div style="overflow-x:auto"><table>
+
+        <thead><tr>
+
+          <th>#</th><th>模型</th><th>昵称</th><th>信誉等级</th><th>状态</th><th>语言</th>
+
+          <th>一起玩的次数</th><th>一起玩的时长</th><th>最后见面</th>
+
+          <th>最后活动时间</th><th>最后登录时间</th><th>账号创建时间</th><th>操作</th>
+
+        </tr></thead>
+
+        <tbody id="fltBody"><tr><td colspan="13" class="dim">加载中…</td></tr></tbody>
+
+      </table></div>
+
+    </div>
+
+    <div class="card hidden" id="soc-mod">
+
+      <div class="head"><div style="font-weight:600">屏蔽 / 静音列表</div>
+
+        <button class="ghost" onclick="loadModerations()">刷新</button></div>
+
+      <div id="moderations"><div class="dim">加载中…</div></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-gamelog" class="hidden"><div class="page-heading"><h2>游戏日志</h2></div>
+
+    <div class="card"><div class="head"><div style="font-weight:600">PC Companion 未连接</div></div>
+
+      <div class="msg">游戏日志由运行 VRChat 的电脑通过 PC Companion 提供（进入/离开实例、世界切换、视频播放等事件）。<br>
+
+      未连接 Companion 时本页如实显示为空，不生成伪数据。需要兼容的电脑端数据来源。</div></div>
+
+  </section>
+
+  <section id="page-playerlist" class="hidden"><div class="page-heading"><h2>房内玩家</h2></div>
+
+    <div class="card"><div class="head"><div style="font-weight:600">PC Companion 未连接</div></div>
+
+      <div class="msg">当前实例内的玩家名单由 PC Companion 提供（需要游戏进程内可见性）。未连接时如实为空。</div></div>
+
+  </section>
+
+  <section id="page-activity" class="hidden"><div class="page-heading"><h2>活动记录</h2></div>
+
+    <div class="card"><div class="head"><div style="font-weight:600">PC Companion 未连接</div></div>
+
+      <div class="msg">上游"活动记录"图表基于本地 GameLog 的实例活动绘制（上游 useInstanceActivityData → 本地数据库）。Pi 端需 PC Companion 提供同等数据，未连接时如实为空。</div></div>
+
+  </section>
+
+  <section id="page-mutual" class="hidden"><div class="page-heading"><h2>共同好友</h2></div>
+
+    <div class="card">
+
+      <div class="head"><div style="font-weight:600">共同好友图</div>
+
+        <button class="ghost" onclick="loadMutualGraph()">加载</button></div>
+
+      <div id="mutualGraph"><div class="dim">点击"加载"拉取好友之间的共同好友关系（上游 MutualFriends 图的 Pi 等价实现，数据来自 VRChat mutuals API）</div></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-hotworlds" class="hidden"><div class="page-heading"><h2>热门世界</h2></div>
+
+    <div class="card"><div class="head"><div style="font-weight:600">PC Companion 未连接</div></div>
+
+      <div class="msg">上游"热门世界"图表统计本地 GameLog 中世界出现热度（database.getHotWorlds）。Pi 端需 PC Companion，未连接时如实为空。</div></div>
+
+  </section>
+
+  <section id="page-direct" class="hidden"><div class="page-heading"><h2>直达</h2></div>
+
+    <div class="card">
+
+      <div class="dim" style="font-size:13px;margin-bottom:8px">粘贴用户/世界/模型/群组 ID 或 VRChat 链接，直接打开对应详情（上游 direct-access）</div>
+
+      <div class="row">
+
+        <input id="directInput" placeholder="usr_… / wrld_… / avtr_… / grp_… 或 https://vrchat.com/…" style="flex:1;min-width:260px" onkeydown="if(event.key==='Enter')directGo()">
+
+        <button onclick="directGo()">打开</button>
+
+      </div>
+
+      <div class="msg" id="directMsg"></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-netstats" class="hidden"><div class="page-heading"><h2>流量</h2></div>
+
+    <div class="dim" style="font-size:13px">口径 = 中转隧道（SSH SOCKS5）经手的字节 ≈ 服务器流量包的消耗；每 10 秒自动刷新，数据跨重启连续。</div>
+
+    <div id="netgrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px"></div>
+
+  </section>
+
+  <section id="page-extensions" class="hidden"><div class="page-heading"><h2>管理</h2></div>
+
+    <div class="card"><div class="dim" style="font-size:13px;margin-bottom:6px">
+
+      管理推送、统计和好友相关功能。</div>
+
+      <div class="setrow"><div>推送（Bark/Telegram/手表通知）与六类事件开关</div>
+
+        <button class="ghost mini" onclick="switchPage('push')">打开</button></div>
+
+      <div class="setrow"><div>好友统计图表（在线时长排行/世界热度/上线热力图/网页在线时长）</div>
+
+        <button class="ghost mini" onclick="switchPage('stats')">打开</button></div>
+
+      <div class="setrow"><div>好友列表"在线概况"汇总表（游戏内/网页在线/离线）</div>
+
+        <button class="ghost mini" onclick="switchPage('friendtable')">打开</button></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-tools" class="hidden"><div class="page-heading"><h2>工具</h2></div>
+
+    <div class="grid2">
+
+      <div class="card"><div style="font-weight:600">世界查询</div>
+
+        <div class="msg" style="margin:4px 0 8px">粘贴 wrld_ id 或 VRChat 世界链接</div>
+
+        <div class="row"><input id="toolWorld" style="flex:1;min-width:160px" placeholder="wrld_xxxxxxxx-...">
+
+          <button onclick="toolWorld()">查询</button></div></div>
+
+      <div class="card"><div style="font-weight:600">实例查询</div>
+
+        <div class="msg" style="margin:4px 0 8px">粘贴完整 location 串（好友详情里可复制）</div>
+
+        <div class="row"><input id="toolInst" style="flex:1;min-width:160px" placeholder="wrld_xxx:123~region(eu)">
+
+          <button onclick="toolInstance()">查询</button></div></div>
+
+      <div class="card"><div style="font-weight:600">随机世界</div>
+
+        <div class="msg" style="margin:4px 0 8px">从 VRChat 公开世界随机抽一个</div>
+
+        <button onclick="toolRandom()">随机一个</button>
+
+        <div id="toolRandomOut" style="margin-top:10px"></div></div>
+
+      <div class="card"><div style="font-weight:600">推送测试</div>
+
+        <div class="msg" style="margin:4px 0 8px">验证 Bark → 手机 → 手表链路</div>
+
+        <button class="ghost" onclick="testPush()">发测试推送</button></div>
+
+    </div>
+
+  </section>
+
+  <section id="page-settings" class="hidden"><div class="page-heading"><h2>设置</h2></div>
+    <div class="settings-load" role="status"><span id="settingsLoadStatus"></span><button id="settingsLoadRetry" class="ghost hidden" onclick="loadSettings(true)">重试加载</button></div>
+
+    <div class="card">
+
+      <div style="font-weight:600;margin-bottom:8px">账号与运维</div>
+
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+        <button onclick="switchPage('login')">账号（登录/双号切换/总览）</button>
+
+        <button onclick="switchPage('extensions')">管理</button>
+
+        <button onclick="switchPage('netstats')">流量统计</button>
+
+      </div>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">监控</div>
+
+      <div class="setrow"><div>跟随 VRChat 收藏夹（自动播报收藏好友）</div>
+
+        <div class="sw" id="sw-watch_favorites" onclick="swToggle(this,'watch_favorites')"></div></div>
+
+      <div class="setrow"><div>收藏夹同步间隔（秒）</div><input id="set-favorites_sync_seconds" type="number" min="20" style="width:90px" oninput="saveSettings()"></div>
+
+      <div class="setrow"><div>轮询间隔（秒，建议 ≥15）</div><input id="set-poll_seconds" type="number" min="15" style="width:90px" oninput="saveSettings()"></div>
+
+    </div>
+
+    <div class="card access-help"><h3>安全与访问范围</h3>
+      <p>网页访问口令用于进入本站，和 VRChat 账号密码不同。口令按访问入口生效，不会自动区分局域网和互联网；同一入口使用同一口令。</p>
+      <dl><dt>本机访问</dt><dd>仅本机使用时，监听回环地址。不要把账号服务端口直接开放到网络。</dd>
+        <dt>局域网访问</dt><dd>其他设备通过服务器的局域网地址访问，也应设置访问口令、限制可访问设备；HTTP 不加密口令和资料。</dd>
+        <dt>互联网访问</dt><dd>使用 HTTPS 和受保护的网关入口。应用口令不等于公网防护；本项目不包含公网防护体系，防火墙、证书、WAF、DDoS 防护及安全维护由部署者负责。</dd></dl>
+      <p class="dim">需要局域网和互联网分别使用不同口令时，应由部署者配置两个独立访问网关。网页不能查看或修改服务器网关口令。</p>
+    </div>
+    <details class="card" id="engineAccessSettings"><summary>账号服务兼容口令（高级）</summary>
+      <p class="dim">此处只显示旧账号服务的配置状态，不代表网关是否受保护。双账号服务之间需要协调认证，网页不支持分别修改或清除服务口令；请由部署者统一维护。使用 nginx 等服务器网关时，访问口令在网关侧管理。</p>
+
+      <div class="setrow"><div>当前账号服务口令</div>
+
+        <span class="dim" id="set-pwstate"></span></div>
+
+    </details>
+
+    <div class="card hidden" id="appAccessSettings"><h3>应用统一访问密码</h3><p>两个账号共用应用入口。部署者在服务器运行 <code>python run.py --set-password</code> 修改此入口密码；如指定数据目录，需使用相同的 <code>--data-dir</code>。局域网和互联网访问同一入口时使用同一密码。</p></div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">数据管理</div>
+      <div class="setrow"><div>导出</div>
+        <span class="row">
+          <a class="mlink" href="#" onclick="downloadExport('friends.csv');return false">好友列表 CSV</a>
+          <a class="mlink" href="#" onclick="downloadExport('events.json');return false">动态 JSON</a>
+        </span></div>
+      <div class="setrow"><div>数据库备份（在线备份 + 完整性校验）</div>
+        <span class="row">
+          <button class="ghost" onclick="createBackup()">立即备份</button>
+          <select id="bkList" style="max-width:200px"></select>
+          <button id="backupRetry" class="ghost hidden" onclick="loadBackups(true)">重试列表</button>
+          <button class="ghost" style="color:var(--red)" onclick="restoreBackup()">恢复所选</button>
+        </span></div>
+    </div>
+    <div class="msg" id="settingsMsg">改动即时保存并热生效（监控每轮自动重读配置）</div>
+
+  </section>
+
+  <section id="page-push" class="hidden"><div class="page-heading"><h2>推送（手机 / Apple Watch）</h2></div>
+    <div class="settings-load" role="status"><span id="pushLoadStatus"></span><button id="pushLoadRetry" class="ghost hidden" onclick="loadSettings(true)">重试加载</button></div>
+    <div class="settings-load" role="status"><span id="pushScopeStatus"></span><button id="pushScopeRetry" class="ghost hidden" onclick="loadPushCfg(true)">重试提醒范围</button></div>
+
+    <div class="card" style="max-width:720px">
+
+      <div style="font-weight:600;margin-bottom:8px">推送哪些好友（手机提醒范围）</div>
+
+      <div id="pushModeRow" style="display:flex;gap:8px;margin-bottom:10px">
+
+        <button class="ghost" data-m="all" style="flex:1;padding:8px" onclick="pickPushMode(this,'all')">全部好友</button>
+
+        <button class="ghost" data-m="favorites" style="flex:1;padding:8px" onclick="pickPushMode(this,'favorites')">收藏夹（旧行为）</button>
+
+        <button class="ghost" data-m="custom" style="flex:1;padding:8px" onclick="pickPushMode(this,'custom')">自选列表</button>
+
+        <button class="ghost" data-m="off" style="flex:1;padding:8px" onclick="pickPushMode(this,'off')">关闭</button>
+
+      </div>
+
+      <div id="pushCustom" class="hidden">
+
+        <div id="pushChips" style="margin-bottom:8px"></div>
+
+        <input id="pushSearch" placeholder="搜索好友…" style="width:100%;margin-bottom:6px" oninput="renderPushPick()">
+
+        <div id="pushPick" style="max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:8px"></div>
+
+      </div>
+
+      <div style="margin-top:10px"><button onclick="savePushCfg()">保存推送设置</button> <span class="dim" id="pushSaveMsg" style="font-size:12px"></span></div>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">推送事件（每类独立开关）</div>
+
+      <div class="setrow"><div>上线（进入世界）</div><div class="sw" id="sw-notify_online" onclick="swToggle(this,'notify_online')"></div></div>
+
+      <div class="setrow"><div><span style="color:#2563eb">网页在线</span>（上线/回大厅，未进世界）</div><div class="sw" id="sw-notify_active" onclick="swToggle(this,'notify_active')"></div></div>
+
+      <div class="setrow"><div>下线</div><div class="sw" id="sw-notify_offline" onclick="swToggle(this,'notify_offline')"></div></div>
+
+      <div class="setrow"><div>网页下线（网页在线的好友离开）</div><div class="sw" id="sw-notify_active_offline" onclick="swToggle(this,'notify_active_offline')"></div></div>
+
+      <div class="setrow"><div>位置变动（换世界）</div><div class="sw" id="sw-notify_world_change" onclick="swToggle(this,'notify_world_change')"></div></div>
+
+      <div class="setrow"><div>状态变动（Join Me / Ask Me / 勿扰）</div><div class="sw" id="sw-notify_status" onclick="swToggle(this,'notify_status')"></div></div>
+
+      <div class="setrow"><div>简介变更</div><div class="sw" id="sw-notify_desc" onclick="swToggle(this,'notify_desc')"></div></div>
+
+      <div class="setrow"><div>模型变动</div><div class="sw" id="sw-notify_avatar" onclick="swToggle(this,'notify_avatar')"></div></div>
+
+      <div class="dim" style="font-size:12px;margin-top:8px">仅对收藏夹中的好友生效；开关即时生效，无需重启</div>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">Bark 通道（iPhone / Apple Watch）</div>
+
+      <div class="setrow"><div>启用 Bark</div><div class="sw" id="sw-bark_enabled" onclick="swToggle(this,'bark.enabled')"></div></div>
+
+      <div class="setrow"><div>Bark Key</div><span class="dim" id="set-barkkey"></span></div>
+
+      <div class="setrow"><div>通知级别</div>
+
+        <select id="set-level" onchange="saveSettings()"><option value="active">普通</option>
+
+          <option value="timeSensitive">时效性（穿透专注模式）</option>
+
+          <option value="critical">紧急警报（穿透一切）</option></select></div>
+
+      <div class="setrow"><div>通知分组</div><input id="set-group" style="width:120px" oninput="saveSettings()"></div>
+
+      <div class="setrow"><div>提示音（Bark 音效名）</div><input id="set-sound" style="width:160px" oninput="saveSettings()"></div>
+
+      <div class="setrow"><div>紧急警报音量（0-10）</div><input id="set-critical_volume" type="number" min="0" max="10" style="width:80px" oninput="saveSettings()"></div>
+
+      <div class="setrow"><div>测试</div><button class="ghost" onclick="testPush()">发测试推送</button></div>
+
+    </div>
+
+    <div class="card"><div style="font-weight:600;margin-bottom:4px">Telegram（备用通道，手表直连）</div>
+
+      <div class="setrow"><div>启用</div><div class="sw" id="sw-tg" onclick="swToggle(this,'telegram.enabled')"></div></div>
+
+      <div class="setrow"><div>Bot Token</div><input id="set-tgtoken" style="width:220px" oninput="saveSettings()"></div>
+
+      <div class="setrow"><div>Chat ID</div><input id="set-tgchat" style="width:140px" oninput="saveSettings()"></div>
+
+    </div>
+
+    <div class="msg" id="pushMsg" style="display:none"></div>
+
+  </section>
+
+  <section id="page-login" class="hidden"><div class="page-heading"><h2>账号</h2></div>
+
+    <div id="acctSwitch" style="position:relative;display:flex;background:var(--hov);border-radius:999px;padding:3px;margin-bottom:12px;max-width:720px">
+
+      <div id="acctSlide" style="position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/2);background:var(--accent);border-radius:999px;transition:transform .25s ease"></div>
+
+      <button data-v="ov" style="flex:1;position:relative;z-index:1;border:none;background:transparent;padding:9px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="switchAcct('ov')">双号</button>
+
+      <button data-v="self" style="flex:1;position:relative;z-index:1;border:none;background:transparent;padding:9px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="switchAcct('self')">账号A</button>
+
+      <button data-v="peer" style="flex:1;position:relative;z-index:1;border:none;background:transparent;padding:9px 8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" onclick="switchAcct('peer')">账号B</button>
+
+    </div>
+
+    <div id="acctOv" class="hidden">
+
+      <div class="card" style="max-width:980px">
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+
+          <div style="font-weight:600">双号好友动态</div>
+
+          <div class="tabs" id="ovFeedTabs" style="margin:0">
+
+            <button class="tabbtn active" data-m="merge" onclick="setOvFeedMode(this)">合并</button>
+
+            <button class="tabbtn" data-m="a" onclick="setOvFeedMode(this)">A 号动态</button>
+
+            <button class="tabbtn" data-m="b" onclick="setOvFeedMode(this)">B 号动态</button>
+
+          </div>
+
+          <span class="dim" style="font-size:11px;margin-left:auto">行首圆标 = 来源号（紫=A 号 青=B 号）</span>
+
+        </div>
+
+        <div id="ovFeed" style="max-height:420px;overflow:auto;margin-top:8px"><div class="dim">加载中…</div></div>
+
+      </div>
+
+      <div class="card" style="max-width:980px;margin-top:12px">
+
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+
+          <div style="font-weight:600">双号好友列表</div>
+
+          <div class="tabs" id="ovListTabs" style="margin:0">
+
+            <button class="tabbtn active" data-m="merge" onclick="setOvListMode(this)">合并</button>
+
+            <button class="tabbtn" data-m="a" onclick="setOvListMode(this)">A 号好友</button>
+
+            <button class="tabbtn" data-m="b" onclick="setOvListMode(this)">B 号好友</button>
+
+          </div>
+
+        </div>
+
+        <div id="ovFriends" style="max-height:420px;overflow:auto;margin-top:8px"><div class="dim">加载中…</div></div>
+
+      </div>
+
+    </div>
+
+    <div class="card" style="max-width:720px">
+
+      <div id="acctSelf" class="dim" style="font-size:13px">加载中…</div>
+
+      <div id="acctPeer" class="dim hidden" style="font-size:13px">加载中…</div>
+
+    </div>
+
+    <div class="card" id="acctSelfForm" style="max-width:720px;margin-top:12px">
+
+      <div style="font-weight:600;margin-bottom:8px">登录 VRChat（<span id="acctNameSelf">账号A</span>）</div>
+
+      <form id="acctSelfLoginForm" class="row" autocomplete="on" onsubmit="event.preventDefault();doLogin()">
+
+        <input id="username" name="username" autocomplete="username" placeholder="用户名 / 邮箱" style="width:200px">
+
+        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="密码" style="width:160px">
+
+        <input id="code" name="code" autocomplete="one-time-code" placeholder="验证码" class="hidden" style="width:130px" inputmode="numeric">
+
+        <button id="loginBtn" type="submit">登录</button>
+
+      </form>
+
+      <div class="msg" id="loginMsg">登录成功后会复用会话；会话过期时需重新登录。手机可用密码管理器填充账号和密码，验证码可从键盘建议栏填入；密码不会保存到服务端。</div>
+
+    </div>
+
+    <div class="card hidden" id="acctPeerForm" style="max-width:720px;margin-top:12px">
+
+      <div style="font-weight:600;margin-bottom:8px">登录 VRChat（<span id="acctNamePeer">账号B</span>）</div>
+
+      <form id="acctPeerLoginForm" class="row" autocomplete="on" onsubmit="event.preventDefault();doPeerLogin()">
+
+        <input id="p_username" name="username" autocomplete="username" placeholder="用户名 / 邮箱" style="width:200px">
+
+        <input id="p_password" name="password" type="password" autocomplete="current-password" placeholder="密码" style="width:160px">
+
+        <input id="p_code" name="code" autocomplete="one-time-code" placeholder="验证码" class="hidden" style="width:130px" inputmode="numeric">
+
+        <button id="p_loginBtn" type="submit">登录</button>
+
+      </form>
+
+      <div class="msg" id="p_loginMsg">密码不会保存到服务端。重新登录时可用手机密码管理器填充账号和密码，验证码可从键盘建议栏填入。</div>
+
+    </div>
+
+  </section>
+
+</main>
+
+<aside class="rpanel" id="rpanel">
+
+  <div class="rtabs">
+
+    <button class="rtab active" id="rtab-friends" onclick="setRPTab('friends')">好友 <span id="rpCount"></span></button>
+
+    <button class="rtab" id="rtab-rooms" onclick="setRPTab('rooms')">群组房间 <span id="rpRooms"></span></button>
+
+    <button class="ghost mini" style="margin-left:auto" onclick="refreshPanel(this)" title="立即刷新好友状态"></button>
+
+    <button class="ghost mini" id="rpClose" onclick="mbCloseDrawer()" title="关闭"></button>
+
+  </div>
+
+  <div id="rpBody"><div class="dim">加载中…</div></div>
+
+  <div class="piStatsLine dim" style="font-size:11px;margin-top:8px;line-height:1.5"></div>
+
+</aside>
+
+<nav id="mobileNav" aria-label="主导航"><button data-mb="feed" onclick="mobileGo('feed')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h11"/></svg><span>动态</span></button><button data-mb="friendfeed" onclick="mobileGo('friendfeed')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 19v-2a6 6 0 0 1 12 0v2m2-10h5m-5 5h5m-5 5h5"/></svg><span>单人动态</span></button><button data-mb="locations" onclick="mobileGo('locations')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21v-3a7 7 0 0 1 14 0v3m2-15a4 4 0 0 1 0 8m1 3a5 5 0 0 1 3 4"/></svg><span>好友</span></button><button data-mb="favorites" onclick="mobileGo('favorites')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg><span>收藏</span></button><button data-mb="home" onclick="mobileGo('home')"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><span>我的</span></button></nav>
+
+<div id="moreSheet" class="hidden" onclick="if(event.target===this)toggleMore()">
+
+  <div class="sheet">
+
+    <div class="sheet-heading"><h2 id="sheetTitle">全部功能</h2><button class="ghost" onclick="mbSheetsClose()" aria-label="关闭">关闭</button></div>
+
+    <div class="grid" id="moreGrid"></div>
+
+    <div style="display:flex;gap:8px;margin-top:12px">
+
+      <button class="ghost" data-hide-in-merge style="flex:1" onclick="mbGo('settings')">设置</button>
+
+      <button class="ghost" style="flex:1" onclick="mbSheetsClose();window.open('https://github.com/vrcx-team/VRCX/wiki','_blank')">VRCX 参考文档</button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="qs-overlay hidden" id="qsOverlay" onclick="if(event.target===this)closeQS()">
+  <div class="qs-box">
+    <input class="qs-input" id="qsInput" placeholder="搜索好友 / 粘贴 ID 或 vrchat.com 链接（Ctrl K 呼出）"
+      oninput="qsOnInput()" onkeydown="if(event.key==='Escape')closeQS()">
+    <div id="qsBody"><div class="dim">输入关键词，或直接粘贴 usr_/wrld_/avtr_/grp_ ID</div></div>
+  </div>
+</div>
+
+<div class="modal hidden" role="dialog" aria-modal="true" aria-label="详情" id="modal" onclick="if(event.target===this)closeModal()">
+
+  <div class="mcard" id="mcard"></div>
+
+</div>
+
+</div><!-- /bodyrow -->
+
+<script defer src="/static/core/feed.js?v=__UI_VER__"></script>
+<script defer src="/static/core/runtime.js?v=__UI_VER__"></script>
+<script defer src="/static/core/legacy.js?v=__UI_VER__"></script>
+<script defer src="/static/core/images.js?v=__UI_VER__"></script>
+<script defer src="/static/pages/activity.js?v=__UI_VER__"></script>
+<script defer src="/static/pages/catalog.js?v=__UI_VER__"></script>
+<script defer src="/static/pages/details.js?v=__UI_VER__"></script>
+<script defer src="/static/pages/accounts.js?v=__UI_VER__"></script>
+<script defer src="/static/pages/mobile.js?v=__UI_VER__"></script>
+<script defer src="/static/bootstrap.js?v=__UI_VER__"></script>
+
+</body>
+
+</html>

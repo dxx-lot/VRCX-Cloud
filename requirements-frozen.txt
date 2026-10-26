@@ -1,0 +1,13 @@
+# 不包含账号状态或开发依赖；按解释器版本选择兼容的 pycparser。
+certifi==2026.10.23
+cffi==2.1.1
+charset-normalizer==3.5.2
+cryptography==50.0.2
+idna==3.20
+pycparser==3.11; python_version < "3.11"
+pycparser==3.12; python_version >= "3.11"
+PySocks==1.7.1
+python-socks==2.8.2
+requests==2.34.2
+urllib3==2.8.0
+websocket-client==1.9.2

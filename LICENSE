@@ -1,0 +1,63 @@
+VRCX Cloud Noncommercial Share-Source License 1.0
+SPDX identifier: LicenseRef-VRCX-Cloud-NC-ShareSource-1.0
+Copyright (c) 2026 VRCX Cloud contributors
+
+1. Scope and third-party rights
+This license applies to original contributions and modifications to VRCX Cloud
+for which the copyright holders have chosen this license (the "Software").
+See LICENSES/PROJECT_SCOPE.md for the project holder, paths, and contact.
+Third-party material retains its own license. In particular, VRCX material
+identified in LICENSES/NOTICE.md remains subject to the MIT license reproduced
+in LICENSES/VRCX-LICENSE. This license does not withdraw, replace, or restrict
+rights independently granted under those third-party licenses.
+
+2. Noncommercial permission
+Subject to these conditions, you may use, study, copy, modify, and distribute
+the Software in source or executable form for noncommercial purposes only.
+"Commercial use" means use primarily intended for or directed toward commercial
+advantage or monetary compensation, including selling copies, paid hosting or
+subscriptions, advertising-supported operation, and integration into products
+or services operated for commercial advantage. Commercial use requires a
+separate written license from the relevant copyright holders. No commercial
+permission is granted by this license.
+
+3. Public corresponding source
+If you distribute a modified version, or make a modified version available to
+others through a network service, you must, from the time it is made available,
+publicly provide its complete corresponding source at a stable URL, without
+payment or a login requirement, under this same license. Clearly display that
+URL with the distribution and, for a network service, in its interface.
+Corresponding source means the preferred form for modification, including your
+changes, required build and installation scripts, dependency declarations,
+and sanitized example configuration needed to build and run that version.
+Do not include passwords, tokens, private keys, account data, or private logs.
+Document any omitted private configuration so users can supply their own.
+Keep the source available while distributing or operating that version and
+for at least three years after the last such distribution or operation.
+Private modifications that are neither distributed nor used to provide a
+service to others do not trigger this source-publication requirement.
+For unmodified executable distributions, provide the corresponding source
+with the distribution or a publicly accessible URL for that exact version.
+
+4. Notices and downstream conditions
+Retain this license, copyright notices, and all applicable third-party notices.
+Mark modified versions and describe the changes. Recipients receive the same
+noncommercial and source-sharing rights and obligations; you may not impose
+additional restrictions that prevent exercising those rights. This license
+grants no trademark rights and no endorsement by the original authors.
+
+5. Termination
+Permission terminates if you violate these conditions. For a first violation,
+permission is reinstated when you remedy it within 30 days after receiving
+written notice. This does not limit remedies for past violations or grant
+rights to third-party material beyond its applicable license.
+
+6. No warranty; limitation of liability
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, AND NONINFRINGEMENT. TO THE MAXIMUM EXTENT PERMITTED BY
+APPLICABLE LAW, NO COPYRIGHT HOLDER OR CONTRIBUTOR IS LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+This is a custom source-available software license. It is not an OSI-approved
+open-source license. The English text above is the operative license text.

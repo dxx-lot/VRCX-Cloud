@@ -1,0 +1,5 @@
+# 应用运行依赖；SOCKS 代理同时供 REST 与 WebSocket 使用。
+requests[socks]>=2.34.2,<3
+websocket-client>=1.9,<2
+python-socks>=2.5,<3
+cryptography>=42
