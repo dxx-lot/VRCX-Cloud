@@ -36,8 +36,14 @@ def test_server_access_and_license_are_documented():
         assert '不包含公网防护' in (ROOT/name).read_text()
     text=(ROOT/'server/README.md').read_text()
     assert all(word in text for word in ('本机','局域网','互联网','HTTPS','手机','浏览器'))
-    assert 'MIT License' in (ROOT/'LICENSES/VRCX-LICENSE').read_text()
-    assert 'noncommercial purposes only' in (ROOT/'LICENSE').read_text()
+    project=(ROOT/'LICENSE').read_text()
+    upstream=(ROOT/'LICENSES/VRCX-LICENSE').read_text()
+    assert project.startswith('MIT License\n')
+    assert 'Copyright (c) 2026 VRCX Cloud contributors' in project
+    assert project.split('Permission is hereby granted',1)[1]==upstream.split('Permission is hereby granted',1)[1]
+    assert hashlib.sha256(upstream.encode()).hexdigest()=='e51564d05fd8f98bba289b476815150c78d3bf8f4acd248d78986e0061bb7427'
+    for name in ('README.md','LICENSING.md','LICENSES/PROJECT_SCOPE.md','LICENSES/NOTICE.md'):
+        assert 'MIT License' in (ROOT/name).read_text()
     assert 'VRCX-Cloud/1.0.0 (unofficial self-hosted client)' in (ROOT/'src/application/launcher.py').read_text()
 
 

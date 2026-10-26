@@ -49,6 +49,6 @@ Ctrl+C 停止本次启动的服务，运行数据保留。Linux 默认数据目�
 
 本项目参考并包含衍生自 [VRCX](https://github.com/vrcx-team/VRCX) 的实现，上游 MIT 版权及许可原文保留在 [第三方许可](LICENSES/VRCX-LICENSE)，来源和修改范围见 [第三方声明](LICENSES/NOTICE.md)。
 
-本项目原创贡献和有权许可的修改采用**禁止商用、修改版公开源码**的自定义源码可见许可，见 [LICENSE](LICENSE) 和 [许可说明](LICENSING.md)。它不是 OSI 认可的开源许可，不取消第三方 MIT 许可已授予的权利。第三方项目名称用于标识来源和兼容关系，不代表关联或背书，也不授予其商标权。
+本项目原创贡献和有权许可的修改采用 **MIT License**，允许商业使用、修改和分发；分发时须保留版权和许可声明。完整条款见 [LICENSE](LICENSE) 和 [许可说明](LICENSING.md)。第三方项目名称用于标识来源和兼容关系，不代表关联或背书，也不授予其商标权。
 
 参与贡献与运行合成测试见 [贡献指南](CONTRIBUTING.md)。
