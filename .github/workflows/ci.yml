@@ -39,3 +39,22 @@ jobs:
           PYTHON: python
       - run: python run.py --check
       - run: python scripts/export-public.py
+
+  linux-install:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ['ubuntu:22.04', 'ubuntu:24.04', 'debian:12-slim', 'debian:13-slim']
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: 验证真实系统的安装和只读启动检查
+        shell: bash
+        run: |
+          bash scripts/install-linux.sh --no-start
+          bash scripts/start-linux.sh --check

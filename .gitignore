@@ -1,6 +1,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.vrcx-cloud/
 venv/
 node_modules/
 dist/
