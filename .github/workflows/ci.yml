@@ -56,5 +56,9 @@ jobs:
       - name: 验证真实系统的安装和只读启动检查
         shell: bash
         run: |
-          bash scripts/install-linux.sh --no-start
+          cp scripts/install-linux.sh /tmp/vrcx-cloud-install.sh
+          bash /tmp/vrcx-cloud-install.sh --dir /tmp/vrcx-cloud-first-install --no-start
+          cd /tmp/vrcx-cloud-first-install
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           bash scripts/start-linux.sh --check
+          bash scripts/install-linux.sh --no-start

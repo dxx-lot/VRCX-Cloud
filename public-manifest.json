@@ -4,7 +4,7 @@
   "version": "v1.0.0",
   "files": {
     ".dockerignore": "294ec20ebbcc0cfcd696b2e236c337650c9e1982c99c19a905077a7bad2b1333",
-    ".github/workflows/ci.yml": "43efeec7554173e174370d83013dab134927800bb7f76255572a454aac7292f5",
+    ".github/workflows/ci.yml": "f837062b398d5e5ad3d3249dcf22921b8debc31330250a2c4f909c1974990652",
     ".github/workflows/release.yml": "949770f375ad73ba035e7901831069c269372173998bfda1b806159e2a5a374a",
     ".gitignore": "189eaa909cc1d34f4f7da71b2c77ae9d412c85ed7601bb311252c65c51c51ce4",
     "CONTRIBUTING.md": "1a4e96a27553c3401380f400e12bc99005bbd2a97724be87c9ca29df9250b09a",
