@@ -15,7 +15,33 @@
 
 登录失效或采集异常时会显示状态。页面实时连接不可用时使用定时刷新；采集是否正常应查看上次采集时间。合并视角用于阅读，写入操作需选择单个账号。
 
-## 安装：Ubuntu / Debian
+## Docker 一键部署（后台运行）
+
+已有 Docker Engine 和 Compose v2 的 Linux 服务器，可直接复制两行：
+
+```sh
+curl -fL https://raw.githubusercontent.com/dxx-lot/VRCX-Cloud/main/scripts/deploy-docker.sh -o deploy-vrcx-cloud.sh &&
+bash deploy-vrcx-cloud.sh
+```
+
+脚本默认下载到 `~/VRCX-Cloud-docker`，引导选择本机/云服务器或家中局域网、端口，自动构建镜像、设置首次访问密码并后台启动，等待健康检查后显示访问地址。网页用户名 **`vrcx`**，密码为你设置的应用访问密码；进入网页后再登录 VRChat。重复部署复用密码和数据，保留原有会话文件。
+
+**关闭 SSH 终端后仍继续运行。** 运行数据保存在 Docker 命名卷中，容器以非 root 用户运行。脚本不自动安装、启动或重启 Docker 服务；未安装时先按 [Docker 官方安装说明](https://docs.docker.com/engine/install/) 配置 Engine 和 Compose 插件。下载源码还需 `git`；Ubuntu/Debian 可用 `sudo apt-get install -y git ca-certificates` 安装。
+
+常用管理命令：
+
+```sh
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --status
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --logs
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --stop
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --start
+```
+
+`--stop` 保留数据；`--logs` 中按 Ctrl+C 只退出日志查看。默认仅绑定本机地址，云服务器可用 SSH 隧道或 HTTPS；家中手机选择局域网模式。需要换端口可重新执行脚本并加 `--port 8088`。具体数据卷、备份和原生 Compose 命令见 [Docker 部署说明](server/README.md#容器部署)。
+
+下面的 Python 安装是另一种方式，任选一种即可；两者的数据位置不同，脚本不会自动迁移已有账号。
+
+## Python 安装：Ubuntu / Debian
 
 支持 Ubuntu 22.04、24.04 和 Debian 12、13。**以下命令在准备运行程序的 Linux 服务器或小主机终端里执行，不是在手机里执行。** 云服务器先用 SSH 登录；建议使用普通用户，缺少系统依赖时脚本会请求 sudo 权限。
 

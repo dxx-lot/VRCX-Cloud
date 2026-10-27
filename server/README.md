@@ -2,9 +2,14 @@
 
 VRCX Cloud 在服务器运行，手机和电脑通过浏览器访问。以下说明适用于本仓库的统一应用入口。
 
-## 推荐：安装向导
+## 选择安装方式
 
-Ubuntu 22.04、24.04 / Debian 12、13 用户先按 [首页安装步骤](../README.md#安装ubuntu--debian) 操作。向导自动下载源码、安装 Python 独立环境和依赖，首次启动选择访问方式、端口并设置密码；之后运行 `bash ~/VRCX-Cloud/scripts/start-linux.sh`。
+- **Docker**：已装 Engine 和 Compose v2，希望关闭终端仍运行，使用下方 [容器部署](#容器部署) 的一键脚本。
+- **Python**：希望直接在系统独立环境运行，使用 [Python 安装向导](#python-安装向导)。两种方式的数据不自动互相迁移。
+
+## Python 安装向导
+
+Ubuntu 22.04、24.04 / Debian 12、13 用户先按 [首页安装步骤](../README.md) 操作。向导自动下载源码、安装 Python 独立环境和依赖，首次启动选择访问方式、端口并设置密码；之后运行 `bash ~/VRCX-Cloud/scripts/start-linux.sh`。
 
 已有源码时，在源码根目录运行 `bash scripts/install-linux.sh`。仅安装依赖、不启动或设置密码：`bash scripts/install-linux.sh --no-start`。独立下载安装时可用 `--dir /path/to/new-directory` 指定新的安装目录；不会覆盖已有目录。依赖安装失败时会停止，不会修改已有账号数据或重启其他安装。
 
@@ -52,7 +57,35 @@ ssh -N -L 18080:127.0.0.1:8080 登录用户名@服务器地址
 
 ## 容器部署
 
-在独立源码包根目录操作。`server/compose.yaml` 默认只把入口发布到宿主机回环地址：
+### 一键部署
+
+需要 Docker Engine、Compose v2 和下载源码用的 git；当前用户须能正常执行 `docker info`。在服务器终端运行：
+
+```sh
+curl -fL https://raw.githubusercontent.com/dxx-lot/VRCX-Cloud/main/scripts/deploy-docker.sh -o deploy-vrcx-cloud.sh &&
+bash deploy-vrcx-cloud.sh
+```
+
+按照提示选择访问方式和端口，首次设置至少12个字符的应用访问密码；输入时不显示字符。脚本会构建镜像、配置密码、后台启动并等待健康检查。运行数据在命名卷，已有有效密码会复用；错误配置不会被当作首次安装而重设密码。容器设有 `restart: unless-stopped`，Docker 服务可用时容器会恢复运行，手工停止的容器需手工再启动。
+
+默认源码目录为 `~/VRCX-Cloud-docker`。已有源码时直接运行 `bash scripts/deploy-docker.sh`；自定义新目录可用 `--dir /path/to/new-directory`。同名项目属于其他目录、或未登记的同名数据卷已存在时，脚本会停止而不接管。需要另建独立部署时使用新目录和 `--project my-vrcx`，不同项目使用不同数据卷。
+
+访问配置保存于源码目录 `.vrcx-cloud/docker.env`，只包含监听地址、端口和项目名，不含密码；目录0700、文件0600，已被Git忽略。配置按数据解析，不执行其中的命令。以后请用同一安装用户及该目录的脚本管理：
+
+```sh
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --status
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --logs
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --stop
+bash ~/VRCX-Cloud-docker/scripts/deploy-docker.sh --start
+```
+
+查看日志时 Ctrl+C 不停止容器；`--stop` 不删卷。重新执行默认部署命令会使用当前目录源码重建镜像并启动，不自动 git pull 或覆盖源码。可加 `--bind 127.0.0.1` 或 `--bind 0.0.0.0` 切换本机/局域网，`--port 8088` 修改宿主机端口；配置变化可能重建本项目容器，命名卷保留。项目名在首次配置后固定，需要另建项目时使用新目录。
+
+脚本不自动安装或重启 Docker、不改防火墙或安全组。云服务器默认绑定本机，通过上面的 SSH 隧道或下方 HTTPS 入口访问；局域网模式供同一网络的设备访问，不能当作已经安全开放互联网。
+
+### 手动 Compose
+
+没有使用向导时，在独立源码包根目录操作。默认只把入口发布到宿主机回环地址：
 
 ```sh
 docker compose -f server/compose.yaml build
@@ -62,7 +95,7 @@ docker compose -f server/compose.yaml up -d
 
 数据保存于 Docker 命名卷 `vrcx-cloud-data`，默认以非 root 用户运行。必须先设置密码，否则容器拒绝开放监听。
 
-局域网使用：编辑 `server/compose.yaml`，将端口映射的 `127.0.0.1:8080:8080` 改为 `0.0.0.0:8080:8080`，按需配置主机防火墙后重新创建容器。不要在镜像或 Git 中保存数据卷、会话或密码。
+手动局域网使用：在后续 Compose 命令前设置 `VRCX_BIND_HOST=0.0.0.0`，需要换端口时再设置 `VRCX_PORT=8088`。不要在镜像或 Git 中保存数据卷、会话或密码。已通过向导部署时使用向导管理命令，不要另起一套默认项目。
 
 ## 互联网 HTTPS 入口
 
@@ -96,5 +129,7 @@ vrcx.example.com {
 | 输入密码没有字符显示 | 这是正常行为，输入至少 12 个字符后回车，再确认一次 |
 | `Address already in use` | 原端口被占用，重新运行启动命令并加 `--configure`，换一个端口；不需要结束别人的程序 |
 | 手机打不开 `127.0.0.1` | 它指手机自己；局域网用小主机 IP，云服务器用 HTTPS 入口 |
-| 关闭 SSH 后网页停止 | 向导默认前台运行；需要常驻时使用容器部署或自行配置服务管理 |
+| 关闭 SSH 后网页停止 | Python 向导默认前台运行；Docker 向导使用后台模式 |
+| `docker info` 失败 | 先确认 Docker 服务已运行、当前用户有权限；脚本不会自动重启 Docker |
+| Docker 一键部署提示同名项目/数据卷已存在 | 检查原部署；要新建独立实例，使用新的安装目录和 `--project`，不要删除原卷 |
 | pip 下载失败 | 检查服务器到 Python 包源的网络，问题排除后在现有源码目录重新运行安装脚本；不要删除私有数据目录 |

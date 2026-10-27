@@ -62,3 +62,13 @@ jobs:
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           bash scripts/start-linux.sh --check
           bash scripts/install-linux.sh --no-start
+
+  docker-deploy:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: 验证首次Docker部署、访问保护、重复部署与重启持久化
+        run: python3 scripts/check-docker-deploy.py

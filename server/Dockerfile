@@ -12,8 +12,10 @@ COPY src/application ./src/application
 COPY src/webui ./src/webui
 COPY backend ./backend
 COPY scripts/check-runtime.py ./check-runtime.py
+COPY server/healthcheck.py ./healthcheck.py
 COPY LICENSE LICENSING.md ./
 COPY LICENSES ./LICENSES
 USER 10001:10001
 EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=3s --start-period=10s --retries=12 CMD ["python", "/app/healthcheck.py"]
 ENTRYPOINT ["python", "run.py", "--data-dir", "/state", "--host", "0.0.0.0"]

@@ -11,7 +11,7 @@ services:
     security_opt:
       - no-new-privileges:true
     ports:
-      - "127.0.0.1:8080:8080"
+      - "${VRCX_BIND_HOST:-127.0.0.1}:${VRCX_PORT:-8080}:8080"
     volumes:
       - vrcx-cloud-data:/state
     tmpfs:

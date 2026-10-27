@@ -17,7 +17,7 @@ METADATA = ('README.md','CONTRIBUTING.md','SECURITY.md','LICENSE','LICENSING.md'
             'requirements-frozen.txt','requirements-dev.txt','run.py',
             'LICENSES/NOTICE.md','LICENSES/PROJECT_SCOPE.md','LICENSES/VRCX-LICENSE',
             'examples/app.example.json','.github/workflows/ci.yml','.github/workflows/release.yml',
-            'server/README.md','server/Dockerfile','server/compose.yaml')
+            'server/README.md','server/Dockerfile','server/compose.yaml','server/healthcheck.py')
 
 
 def source_paths(root=ROOT):

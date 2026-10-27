@@ -10,6 +10,8 @@
 !backend/**
 !scripts/
 !scripts/check-runtime.py
+!server/
+!server/healthcheck.py
 !LICENSE
 !LICENSING.md
 !LICENSES/
